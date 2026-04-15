@@ -1,0 +1,39 @@
+# ==============================
+# WireGuard Server Configuration
+# ==============================
+
+# IP de la interfaz WireGuard
+# Default: 10.0.0.1/24
+ip_range=10.0.0.0/24
+
+# Puerto de escucha WireGuard
+# Default: 51820
+listen_port=51820
+
+# IP o dominio público del servidor
+# Default: example.com
+remote_ip=example.com
+
+# Comando al levantar la interfaz (NAT + forwarding completo)
+# Usa la interfaz WireGuard automáticamente (%i = wg0, wg1, etc.)
+post_up=iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o $(ip route get 1 | awk '{print $5; exit}') -j MASQUERADE
+
+# Comando al bajar la interfaz (revertir reglas)
+post_down=iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $(ip route get 1 | awk '{print $5; exit}') -j MASQUERADE
+
+# DNS para clientes
+# Default: 1.1.1.1
+dns=1.1.1.1
+
+# Número de peers (clientes)
+# Default: 3
+peers=3
+
+# Rango de IPs permitidas (routing)
+# Default: 0.0.0.0/0 (todo el tráfico)
+allow_ips=0.0.0.0/0
+
+# PersistentKeepalive (segundos)
+# útil para NAT
+# Default: 25
+keep_alive=25
