@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 
-from utils import detect_dist, search_binary, execute
+from modules.utils import detect_dist, search_binary, execute
 
 def package_installer(package:str, distribution:str):
 

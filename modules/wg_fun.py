@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-from utils import search_binary , execute
+from modules.utils import search_binary , execute
 
 def downWireguard():
     print("[*] Bringing down interface wg0...")

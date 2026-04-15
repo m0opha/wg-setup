@@ -1,6 +1,6 @@
-# ==============================
-# WireGuard Server Configuration
-# ==============================
+# =========================================
+# WireGuard Server Configuration by m0opha
+# =========================================
 
 # IP de la interfaz WireGuard
 # Default: 10.0.0.1/24

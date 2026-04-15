@@ -38,6 +38,7 @@ def execute(cmd: list, input: str = None) -> bool:
         result = subprocess.run(
             cmd,
             input=input,
+            capture_output=True,
             text=True,
         )
         return result.returncode == 0

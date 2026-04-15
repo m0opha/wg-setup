@@ -2,12 +2,13 @@
 import os
 import sys
 
-from package_installer import package_installer, detect_dist, remove_package
-from utils import enableIpForward, filetodict, buildIp, saveInFile, execute
-from distribution_packages import dist_packages
-from vars import required_keys, wg_root
-from genCredentials import genCredentials
-from wg_service import enableWireguard , upWireguard
+from modules.package_installer import package_installer, detect_dist, remove_package
+from modules.utils import enableIpForward, filetodict, buildIp, saveInFile, execute
+from vars.distribution_packages import dist_packages
+from vars.vars import required_keys
+from modules.genCredentials import genCredentials
+from modules.wg_fun import enableWireguard , upWireguard
+from vars.paths import wg_root , settings_path
 
 def install_wg():
     distribution = detect_dist()
@@ -37,8 +38,8 @@ def remove_wg():
         else:
             print(f"  [-] {_package} Not removed.")
             
-def server_settings():
-    loadSettings = filetodict("./settings")
+def server_settings(settings_path:str):
+    loadSettings = filetodict(settings_path)
 
     for key ,  value in loadSettings.items():
         if value == "":
@@ -50,10 +51,12 @@ def server_settings():
 if __name__ == "__main__":
     print("Welcome to wg-setup build by m0opha")
     print(f"Distribution detected: " , detect_dist())
-    
+
+
     print("[!] Installing packages")
     install_wg()
     #remove_wg()
+
 
     print("[!] Enabling ip forward")
     if enableIpForward():
@@ -61,14 +64,15 @@ if __name__ == "__main__":
     else:
         print("  [-] Not enabled.")
         sys.exit(1)
-    
-    print("[!] Loading config ")
+
+
+    print("[!] Loading config.")
     #setup settings
-    if not os.path.exists("./settings"):
+    if os.path.exists(settings_path) == False:
         print("[!] Fatal error 'settings' file is required.")
         sys.exit(1)
     
-    config = server_settings()
+    config = server_settings(settings_path)
     if type(config) == bool:
         sys.exit(1)
 
@@ -77,9 +81,9 @@ if __name__ == "__main__":
             print(f"  [-] Key {_key} not recognized.")
             sys.exit(1)
 
+
     print("[!] Setting up server")
     #create wg0.conf
-    
     credentials_path = os.path.join(os.path.join(wg_root), "credentials")
     if not os.path.exists(credentials_path):
         cmd = ["sudo" , "mkdir" , credentials_path]
@@ -186,9 +190,9 @@ if __name__ == "__main__":
             os.path.join(peer_credentials_path, "wg0.conf"),
             "\n".join(client_wg0_content)
             ):
-            print("   [+] Peer 'wg0.conf' saved successfully.")
+            print("   [*] Peer 'wg0.conf' saved successfully.")
         else:
-            print("   [-] Peer 'wg0.conf' not saved.")
+            print("   [*] Peer 'wg0.conf' not saved.")
 
         #agrega el peer a la configuracion del server
         server_wg0_content.extend(add_peer_in_server_wg0_content)
@@ -197,9 +201,9 @@ if __name__ == "__main__":
         os.path.join(wg_root, "wg0.conf"),
         "\n".join(server_wg0_content)
         ):
-        print("  [+] Server 'wg0.conf' saved successfully.")
+        print("  [*] Server 'wg0.conf' saved successfully.")
     else:
-        print("  [-] Server 'wg0.conf' not saved.")
+        print("  [*] Server 'wg0.conf' not saved.")
     
     enableWireguard()
     upWireguard()

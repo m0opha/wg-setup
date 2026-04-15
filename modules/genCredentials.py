@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 import subprocess
 
-from utils import execute, search_binary
+from modules.utils import execute, search_binary
 
 def genCredentials():
     cmd1 = [search_binary("wg"), "genkey"]
