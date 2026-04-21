@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 
-from modules.utils import search_binary , execute
+from modules.utils import search_binary , execute, detect_dist
+from modules.package_installer import package_installer, remove_package
+from vars.distribution_packages import dist_packages
 
 def downWireguard():
     print("[*] Bringing down interface wg0...")
@@ -13,6 +15,7 @@ def downWireguard():
     print("[+] Interface wg0 successfully brought down.")
     return True
 
+
 def upWireguard():
     cmd = ["sudo", "wg-quick", "up", "wg0"]
 
@@ -22,6 +25,7 @@ def upWireguard():
 
     print("[+] Interface wg0 successfully brought up.")
     return True
+
 
 def enableWireguard():
     print("[*] Enabling automatic startup with systemd...")
@@ -38,3 +42,34 @@ def enableWireguard():
 
     print("[+] wg-quick@wg0 service enabled successfully.")
     return True
+
+
+def install_wg():
+    distribution = detect_dist()
+    supported_dist = list(dist_packages.keys())
+    
+    if not distribution in supported_dist:
+        print("[!] Distribution not supported.")
+        return 
+    
+    for _package in dist_packages[distribution]:
+        if package_installer(_package, distribution):
+            print(f"    [+] {_package} installed successfully.")
+        else:
+            print(f"    [-] {_package} Not installed.")
+            
+
+def remove_wg():
+    distribution = detect_dist()
+    supported_dist = list(dist_packages.keys())
+    
+    if not distribution in supported_dist:
+        print("[!] Distribution not supported.")
+        return 
+    
+    for _package in dist_packages[distribution]:
+        if remove_package(_package, distribution):
+            print(f"  [+] {_package} removed successfully.")
+        else:
+            print(f"  [-] {_package} Not removed.")
+            

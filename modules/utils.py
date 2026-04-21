@@ -101,13 +101,11 @@ def buildIp(ip_range: str, host_value: int):
     return intToIp(result) , mask
 
 def saveInFile(path:str, data:str):
-    try:
-        with open(path , "w") as file:
-            file.write(data)
-        return True
-    
-    except Exception:
-        return False
+    cmd = ["sudo","tee", path]
+    return execute(
+        cmd,
+        data
+        )
 
 if __name__ == "_1_main__":
     #filetodict key=value from
